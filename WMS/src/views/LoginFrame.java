@@ -73,13 +73,14 @@ public class LoginFrame extends JFrame {
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String username = usernameField.getText();
-				String password = passwordField.getPassword().toString();
+				String password = new String(passwordField.getPassword());
 				try {
-					controllers.LoginController.btnLogIn(username, password).setVisible(true);
 					setVisible(false);
+					controllers.LoginController.btnLogIn(username, password).setVisible(true);
 					dispose();
 				} catch (IllegalArgumentException ex) {
 					JOptionPane.showMessageDialog(btnLogIn, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+					setVisible(true);
 				}
 			}
 		});

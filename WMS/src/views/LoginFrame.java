@@ -74,5 +74,14 @@ public class LoginFrame extends JFrame {
 		});
 		btnLogIn.setBounds(149, 169, 105, 27);
 		contentPane.add(btnLogIn);
+		
+		JButton button = new JButton("Quit");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		button.setBounds(266, 169, 105, 27);
+		contentPane.add(button);
 	}
 }

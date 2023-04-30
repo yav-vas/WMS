@@ -50,4 +50,15 @@ public class User {
 		this.realName = realName;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		
+		result.append(username + " - ");
+		result.append(userRole.toString() + " - ");
+		result.append(realName);
+		
+		return result.toString().trim();
+	}
+	
 }

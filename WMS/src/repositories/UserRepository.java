@@ -42,7 +42,12 @@ public class UserRepository {
 		return users.toArray(new User[users.size()]);
 	}
 	
+	// if the added user is null - nothing will be added
 	public static void addUser(PrintWriter file, User user) {
+		if (user == null) {
+			return;
+		}
+		
 		StringBuilder userString = new StringBuilder();
 		
 		userString.append(user.getUsername() + " ");
@@ -53,6 +58,7 @@ public class UserRepository {
 		file.write(userString.toString());
 	}
 	
+	// if newUser is null - the oldUser will simply be removed
 	public static void editUser(User oldUser, User newUser) throws FileNotFoundException {
 		File file = new File("data/users.txt");
 		Scanner usersFile = new Scanner(file);

@@ -113,6 +113,17 @@ public class AdminFrame extends JFrame {
 		userInfoPanel.add(passwordField);
 		
 		JButton btnDeleteUser = new JButton("Delete user");
+		btnDeleteUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					User oldUser = usersList.getSelectedValue();
+					User newUser = null;
+					usersList.setModel(controllers.AdminController.btnSaveChangesAndBtnDeleteUser(oldUser, newUser));
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(btnSaveChanges, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		btnDeleteUser.setBounds(173, 137, 131, 43);
 		userInfoPanel.add(btnDeleteUser);
 		
@@ -123,7 +134,7 @@ public class AdminFrame extends JFrame {
 					User oldUser = usersList.getSelectedValue();
 					User newUser = new User(usernameField.getText(), new String(passwordField.getPassword()), userRoleField.getText(), realNameField.getText());
 					int lastSelectedIndex = usersList.getSelectedIndex();
-					usersList.setModel(controllers.AdminController.btnSaveChanges(oldUser, newUser));
+					usersList.setModel(controllers.AdminController.btnSaveChangesAndBtnDeleteUser(oldUser, newUser));
 					usersList.setSelectedIndex(lastSelectedIndex);
 				} catch (IllegalArgumentException ex) {
 					JOptionPane.showMessageDialog(btnSaveChanges, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);

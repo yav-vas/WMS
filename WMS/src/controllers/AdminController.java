@@ -8,7 +8,7 @@ import models.User;
 
 public class AdminController {
 
-	public static ListModel<User> btnSaveChanges(User oldUser, User newUser) throws IllegalArgumentException {
+	public static ListModel<User> btnSaveChangesAndBtnDeleteUser(User oldUser, User newUser) throws IllegalArgumentException {
 		DefaultListModel<User> listModel = new DefaultListModel<User>();
 		
 		try {

@@ -17,7 +17,7 @@ public class LoginFrame extends JFrame {
 	public LoginFrame() {
 		setTitle("Welcome");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 430, 250);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -27,13 +27,13 @@ public class LoginFrame extends JFrame {
 		JLabel welcomeLabel = new JLabel("Welcome to WMS");
 		welcomeLabel.setFont(new Font("Dialog", Font.BOLD, 20));
 		welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		welcomeLabel.setBounds(12, 12, 426, 28);
+		welcomeLabel.setBounds(12, 12, 406, 28);
 		contentPane.add(welcomeLabel);
 		
 		JLabel informationLabel = new JLabel("Please provide your login credentials");
 		informationLabel.setFont(new Font("Dialog", Font.BOLD, 15));
 		informationLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		informationLabel.setBounds(12, 52, 426, 28);
+		informationLabel.setBounds(12, 52, 406, 28);
 		contentPane.add(informationLabel);
 		
 		JLabel usernameLabel = new JLabel("Username:");
@@ -49,12 +49,12 @@ public class LoginFrame extends JFrame {
 		contentPane.add(passwordLabel);
 		
 		usernameField = new JTextField();
-		usernameField.setBounds(149, 100, 139, 21);
+		usernameField.setBounds(149, 100, 222, 21);
 		contentPane.add(usernameField);
 		usernameField.setColumns(10);
 		
 		passwordField = new JPasswordField();
-		passwordField.setBounds(149, 136, 139, 21);
+		passwordField.setBounds(149, 136, 222, 21);
 		contentPane.add(passwordField);
 		
 		JButton btnLogIn = new JButton("Log in");

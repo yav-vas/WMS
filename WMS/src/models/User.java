@@ -23,6 +23,9 @@ public class User {
 	}
 
 	public void setUsername(String username) {
+		if (username.length() == 0)
+			throw new IllegalArgumentException("Username field cannot be empty!");
+		
 		this.username = username;
 	}
 
@@ -31,6 +34,9 @@ public class User {
 	}
 
 	public void setPassword(String password) {
+		if (password.length() == 0)
+			throw new IllegalArgumentException("Password field cannot be empty!");
+		
 		this.password = password;
 	}
 
@@ -47,7 +53,22 @@ public class User {
 	}
 
 	public void setRealName(String realName) {
+		if (realName.length() == 0)
+			throw new IllegalArgumentException("Real name field cannot be empty!");
+		
 		this.realName = realName;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof User) {
+			return ((User)obj).getUsername().equals(this.username)
+					&& ((User)obj).getPassword().equals(this.password)
+					&& ((User)obj).getUserRole().equals(this.userRole)
+					&& ((User)obj).getRealName().equals(this.realName);
+		} else {
+			return false;
+		}
 	}
 	
 	@Override

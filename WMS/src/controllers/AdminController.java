@@ -12,6 +12,8 @@ public class AdminController {
 		DefaultListModel<User> listModel = new DefaultListModel<User>();
 		
 		try {
+			services.UserService.editUser(oldUser, newUser);
+			
 			User[] newUsers = services.UserService.getAllUsers();
 			
 			for(User u : newUsers) {

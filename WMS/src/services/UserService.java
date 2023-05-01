@@ -17,4 +17,8 @@ public class UserService {
 		return UserRepository.getAllUsers();
 	}
 	
+	public static void editUser(User oldUser, User newUser) throws FileNotFoundException {
+		UserRepository.editUser(oldUser, newUser);
+	}
+	
 }

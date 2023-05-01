@@ -1,7 +1,5 @@
 package views;
 
-import java.util.*;
-
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -10,7 +8,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 import models.User;
-import models.UserRole;
 
 public class AdminFrame extends JFrame {
 
@@ -122,14 +119,14 @@ public class AdminFrame extends JFrame {
 		btnSaveChanges = new JButton("Save changes");
 		btnSaveChanges.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				User oldUser = usersList.getSelectedValue();
-				User newUser = new User(usernameField.getText(), new String(passwordField.getPassword()), userRoleField.getText(), realNameField.getText());
-				
 				try {
+					User oldUser = usersList.getSelectedValue();
+					User newUser = new User(usernameField.getText(), new String(passwordField.getPassword()), userRoleField.getText(), realNameField.getText());
+					int lastSelectedIndex = usersList.getSelectedIndex();
 					usersList.setModel(controllers.AdminController.btnSaveChanges(oldUser, newUser));
+					usersList.setSelectedIndex(lastSelectedIndex);
 				} catch (IllegalArgumentException ex) {
 					JOptionPane.showMessageDialog(btnSaveChanges, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
-					setVisible(true);
 				}
 			}
 		});
@@ -209,7 +206,7 @@ public class AdminFrame extends JFrame {
 					return;
 				}
 				
-				User currentUser = users[usersList.getSelectedIndex()];
+				User currentUser = usersList.getSelectedValue();
 				usernameField.setText(currentUser.getUsername());
 				realNameField.setText(currentUser.getRealName());
 				userRoleField.setText(currentUser.getUserRole().toString());

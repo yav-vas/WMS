@@ -1,6 +1,7 @@
 package repositories;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -41,11 +42,37 @@ public class UserRepository {
 		return users.toArray(new User[users.size()]);
 	}
 	
-	public static boolean editUser() throws FileNotFoundException {
+	public static void addUser(PrintWriter file, User user) {
+		StringBuilder userString = new StringBuilder();
+		
+		userString.append(user.getUsername() + " ");
+		userString.append(user.getPassword() + " ");
+		userString.append(user.getUserRole().toString() + " ");
+		userString.append(user.getRealName() + "\n");
+		
+		file.write(userString.toString());
+	}
+	
+	public static void editUser(User oldUser, User newUser) throws FileNotFoundException {
 		File file = new File("data/users.txt");
 		Scanner usersFile = new Scanner(file);
-		// TODO: create a new file with the edited data and delete the previous one
-		return false;
+		PrintWriter tmpWriter = new PrintWriter("data/tmp.txt");
+		File tmpFile = new File("data/tmp.txt");
+		
+		while(usersFile.hasNext()) {
+			User currentUser = new User(usersFile.next(), usersFile.next(), usersFile.next(), usersFile.next());
+			if (currentUser.equals(oldUser)) {
+				addUser(tmpWriter, newUser);
+			} else {
+				addUser(tmpWriter, currentUser);
+			}
+		}
+		
+		usersFile.close();
+		tmpWriter.close();
+		
+		file.delete();
+		tmpFile.renameTo(file);
 	}
 	
 }

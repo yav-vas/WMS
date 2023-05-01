@@ -19,6 +19,7 @@ public class AdminFrame extends JFrame {
 	
 	private JButton btnClearSelection;
 	private JButton btnSaveChanges;
+	private JButton btnDeleteUser;
 	
 	private JList<User> usersList;
 	
@@ -112,13 +113,18 @@ public class AdminFrame extends JFrame {
 		passwordField.setBounds(111, 98, 114, 21);
 		userInfoPanel.add(passwordField);
 		
-		JButton btnDeleteUser = new JButton("Delete user");
+		btnDeleteUser = new JButton("Delete user");
 		btnDeleteUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					User oldUser = usersList.getSelectedValue();
 					User newUser = null;
 					usersList.setModel(controllers.AdminController.btnSaveChangesAndBtnDeleteUser(oldUser, newUser));
+					
+					btnClearSelection.setVisible(false);
+					informationLabel.setVisible(true);
+					informationLabel.setText("To edit the user's details select a username");
+					usersList.clearSelection();
 				} catch (IllegalArgumentException ex) {
 					JOptionPane.showMessageDialog(btnSaveChanges, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
 				}
@@ -161,6 +167,19 @@ public class AdminFrame extends JFrame {
 		userRoleField.setColumns(10);
 		
 		JButton btnAddNewUser = new JButton("Add a new user");
+		btnAddNewUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				informationLabel.setVisible(true);
+				informationLabel.setText("New user creation wizard:");
+				informationLabel.setFont(new Font("Dialog", Font.BOLD, 20));
+				btnClearSelection.setVisible(false);
+				usersList.clearSelection();
+				btnSaveChanges.setEnabled(true);
+				btnDeleteUser.setEnabled(false);
+				userInfoPanel.setVisible(true);
+				// TODO: hide the text input field for the user role and replace it with a combo box
+			}
+		});
 		btnAddNewUser.setBounds(362, 316, 125, 43);
 		contentPane.add(btnAddNewUser);
 		
@@ -181,6 +200,7 @@ public class AdminFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				btnClearSelection.setVisible(false);
 				informationLabel.setVisible(true);
+				informationLabel.setText("To edit the user's details select a username");
 				usersList.clearSelection();
 			}
 		});
@@ -211,6 +231,7 @@ public class AdminFrame extends JFrame {
 			public void valueChanged(ListSelectionEvent e) {
 				userInfoPanel.setVisible(true);
 				btnSaveChanges.setEnabled(false);
+				btnDeleteUser.setEnabled(true);
 				
 				if (usersList.getSelectedIndex() == -1) {
 					userInfoPanel.setVisible(false);

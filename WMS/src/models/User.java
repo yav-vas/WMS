@@ -1,5 +1,7 @@
 package models;
 
+import java.io.FileNotFoundException;
+
 public class User {
 	
 	private String username;
@@ -11,7 +13,7 @@ public class User {
 		
 	}
 	
-	public User(String username, String password, String userRole, String realName) {
+	public User(String username, String password, String userRole, String realName) throws FileNotFoundException {
 		setUsername(username);
 		setPassword(password);
 		setUserRole(UserRole.valueOf(userRole));
@@ -22,7 +24,7 @@ public class User {
 		return username;
 	}
 
-	public void setUsername(String username) {
+	public void setUsername(String username) throws FileNotFoundException {
 		if (username.length() == 0)
 			throw new IllegalArgumentException("Username field cannot be empty!");
 		

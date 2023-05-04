@@ -6,6 +6,7 @@ import javax.swing.event.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileNotFoundException;
 
 import models.User;
 import models.UserRole;
@@ -157,6 +158,8 @@ public class AdminFrame extends JFrame {
 					}
 				} catch (IllegalArgumentException ex) {
 					JOptionPane.showMessageDialog(btnSaveChanges, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+				} catch (FileNotFoundException ex) {
+					JOptionPane.showMessageDialog(btnSaveChanges, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -200,7 +203,7 @@ public class AdminFrame extends JFrame {
 				realNameField.setText(null);
 				userRoleField.setVisible(false);
 				userRoleComboBox.setVisible(true);
-				userRoleComboBox.setSelectedItem(null);
+				userRoleComboBox.setSelectedItem(0);
 				passwordField.setText(null);
 			}
 		});

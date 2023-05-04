@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import models.User;
+import models.UserRole;
 
 public class AdminFrame extends JFrame {
 
@@ -27,6 +28,7 @@ public class AdminFrame extends JFrame {
 	private JTextField realNameField;
 	private JPasswordField passwordField;
 	private JTextField userRoleField;
+	private JComboBox<UserRole> userRoleComboBox;
 
 	/**
 	 * Create the frame.
@@ -55,6 +57,7 @@ public class AdminFrame extends JFrame {
 		usersList = new JList<User>();
 		
 		userInfoPanel = new JPanel();
+		userInfoPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		userInfoPanel.setBounds(362, 102, 316, 192);
 		contentPane.add(userInfoPanel);
 		userInfoPanel.setLayout(null);
@@ -138,10 +141,20 @@ public class AdminFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					User oldUser = usersList.getSelectedValue();
-					User newUser = new User(usernameField.getText(), new String(passwordField.getPassword()), userRoleField.getText(), realNameField.getText());
+					String userRole;
 					int lastSelectedIndex = usersList.getSelectedIndex();
+					// The user is adding a user if nothing is selected on the list
+					if (lastSelectedIndex == -1) {
+						userRole = userRoleComboBox.getSelectedItem().toString();
+					} else {
+						userRole = userRoleField.getText();
+					}
+					User newUser = new User(usernameField.getText(), new String(passwordField.getPassword()), userRole, realNameField.getText());
 					usersList.setModel(controllers.AdminController.btnSaveChangesAndBtnDeleteUser(oldUser, newUser));
 					usersList.setSelectedIndex(lastSelectedIndex);
+					if (lastSelectedIndex == -1) {
+						usersList.setSelectedValue(newUser, true);
+					}
 				} catch (IllegalArgumentException ex) {
 					JOptionPane.showMessageDialog(btnSaveChanges, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
 				}
@@ -166,6 +179,11 @@ public class AdminFrame extends JFrame {
 		userInfoPanel.add(userRoleField);
 		userRoleField.setColumns(10);
 		
+		userRoleComboBox = new JComboBox<UserRole>();
+		userRoleComboBox.setModel(new DefaultComboBoxModel<UserRole>(UserRole.values()));
+		userRoleComboBox.setBounds(111, 66, 193, 26);
+		userInfoPanel.add(userRoleComboBox);
+		
 		JButton btnAddNewUser = new JButton("Add a new user");
 		btnAddNewUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -177,7 +195,13 @@ public class AdminFrame extends JFrame {
 				btnSaveChanges.setEnabled(true);
 				btnDeleteUser.setEnabled(false);
 				userInfoPanel.setVisible(true);
-				// TODO: hide the text input field for the user role and replace it with a combo box
+				
+				usernameField.setText(null);
+				realNameField.setText(null);
+				userRoleField.setVisible(false);
+				userRoleComboBox.setVisible(true);
+				userRoleComboBox.setSelectedItem(null);
+				passwordField.setText(null);
 			}
 		});
 		btnAddNewUser.setBounds(362, 316, 125, 43);
@@ -201,6 +225,7 @@ public class AdminFrame extends JFrame {
 				btnClearSelection.setVisible(false);
 				informationLabel.setVisible(true);
 				informationLabel.setText("To edit the user's details select a username");
+				informationLabel.setFont(new Font("Dialog", Font.BOLD, 12));
 				usersList.clearSelection();
 			}
 		});
@@ -232,6 +257,8 @@ public class AdminFrame extends JFrame {
 				userInfoPanel.setVisible(true);
 				btnSaveChanges.setEnabled(false);
 				btnDeleteUser.setEnabled(true);
+				userRoleField.setVisible(true);
+				userRoleComboBox.setVisible(false);
 				
 				if (usersList.getSelectedIndex() == -1) {
 					userInfoPanel.setVisible(false);

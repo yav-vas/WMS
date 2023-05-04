@@ -59,6 +59,7 @@ public class UserRepository {
 	}
 	
 	// if newUser is null - the oldUser will simply be removed
+	// if oldUser is null - the newUser will be added
 	public static void editUser(User oldUser, User newUser) throws FileNotFoundException {
 		File file = new File("data/users.txt");
 		Scanner usersFile = new Scanner(file);
@@ -72,6 +73,10 @@ public class UserRepository {
 			} else {
 				addUser(tmpWriter, currentUser);
 			}
+		}
+		
+		if (oldUser == null) {
+			addUser(tmpWriter, newUser);
 		}
 		
 		usersFile.close();

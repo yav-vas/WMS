@@ -1,8 +1,4 @@
 package main;
-
-import java.io.FileNotFoundException;
-
-import models.User;
 import views.LoginFrame;
 
 public class Main {

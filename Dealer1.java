@@ -20,13 +20,13 @@ public class Dealer1 extends JFrame{
         layout.setAutoCreateContainerGaps(true);
 
         scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(250, 200));  // Set the width of the scrollpane
-        scrollBar = new JScrollBar(JScrollBar.VERTICAL);  // Set the scrollbar orientation to vertical
+        scrollPane.setPreferredSize(new Dimension(250, 200));
+        scrollBar = new JScrollBar(JScrollBar.VERTICAL);
         layout.setHorizontalGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(dealersText)
                         .addComponent(scrollPane))
-                .addComponent(scrollBar)  // Add scrollbar to the right of scrollpane
+                .addComponent(scrollBar)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(newOrderButton))
         );
@@ -34,7 +34,7 @@ public class Dealer1 extends JFrame{
                 .addGroup(layout.createSequentialGroup()
                         .addComponent(dealersText)
                         .addComponent(scrollPane))
-                .addComponent(scrollBar)  // Add scrollbar to the right of scrollpane
+                .addComponent(scrollBar)
                 .addGroup(layout.createSequentialGroup()
                         .addComponent(newOrderButton))
         );

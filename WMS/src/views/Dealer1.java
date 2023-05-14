@@ -1,4 +1,4 @@
-package Sklad;
+package views;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +18,11 @@ public class Dealer1 extends JFrame{
         panel.setLayout(layout);
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
+        
+        newOrderButton = new JButton();
+        
+        dealersText = new JLabel();
+        dealersText.setText("Current orders");
 
         scrollPane = new JScrollPane();
         scrollPane.setPreferredSize(new Dimension(250, 200));

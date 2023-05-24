@@ -12,4 +12,8 @@ public class ClientService {
 		// TODO: create another method for sorted return, let it be getAllClientsSortedByName
 		return ClientRepository.getAllClients();
 	}
+	
+	public static void addNewClient(Client newClient) throws FileNotFoundException {
+		ClientRepository.addNewClient(newClient);
+	}
 }

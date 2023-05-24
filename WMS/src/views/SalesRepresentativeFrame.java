@@ -20,8 +20,8 @@ public class SalesRepresentativeFrame extends JFrame  {
 		JButton btnNewButton = new JButton("New Order");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				NewOrderFrame newOrderInternalFrame = new NewOrderFrame();
-				newOrderInternalFrame.setVisible(true);
+				NewOrderFrame newOrderFrame = new NewOrderFrame();
+				newOrderFrame.setVisible(true);
 			}
 		});
 		btnNewButton.setBounds(180, 20, 234, 101);

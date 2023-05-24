@@ -1,15 +1,22 @@
 package views;
 
+import java.util.*;
 import javax.swing.*;
-
-import models.Client;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+
+import models.Client;
 
 public class NewOrderFrame extends JFrame {
 	private JTextField cityField;
 	private JTextField addressField;
+	
+	private JButton btnSaveNew;
+	private JButton btnCancel;
+	private JTextField clientNameField;
 
 	/**
 	 * Create the frame.
@@ -20,16 +27,33 @@ public class NewOrderFrame extends JFrame {
 		setBounds(100, 100, 475, 300);
 		getContentPane().setLayout(null);
 		
-		JLabel clientNameLabel = new JLabel("Client name:");
-		clientNameLabel.setBounds(12, 12, 76, 17);
-		getContentPane().add(clientNameLabel);
+		JLabel clientNameInfoLabel = new JLabel("Client name:");
+		clientNameInfoLabel.setBounds(12, 12, 76, 17);
+		getContentPane().add(clientNameInfoLabel);
 		
 		JComboBox<Client> clientComboBox = new JComboBox<Client>();
+		clientComboBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (clientComboBox.getSelectedIndex() == -1)
+					return;
+				
+				Client currentClient = (Client) clientComboBox.getSelectedItem();
+				
+				cityField.setText(currentClient.getCity());
+				cityField.setEditable(false);
+				
+				addressField.setText(currentClient.getAddress());
+				addressField.setEditable(false);
+				
+				btnSaveNew.setVisible(false);
+			}
+		});
 		clientComboBox.setBounds(106, 7, 195, 26);
 		getContentPane().add(clientComboBox);
 		
 		try {
 			clientComboBox.setModel(controllers.NewOrderController.loadComboBox());
+			clientComboBox.setSelectedIndex(-1);
 		} catch (IllegalArgumentException ex) {
 			JOptionPane.showMessageDialog(clientComboBox, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
 			dispose();
@@ -40,9 +64,58 @@ public class NewOrderFrame extends JFrame {
 		orLabel.setBounds(319, 12, 23, 17);
 		getContentPane().add(orLabel);
 		
-		JButton btnCreateANew = new JButton("Create new");
-		btnCreateANew.setBounds(360, 7, 101, 27);
-		getContentPane().add(btnCreateANew);
+		btnSaveNew = new JButton("Save new");
+		btnSaveNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Client newClient = new Client(clientNameField.getText(), cityField.getText(), addressField.getText());
+					controllers.NewOrderController.btnSaveNew(newClient);
+					
+					clientNameField.setVisible(false);
+					clientComboBox.setVisible(true);
+					clientComboBox.setModel(controllers.NewOrderController.loadComboBox());
+					
+					ComboBoxModel<Client> comboBoxModel = clientComboBox.getModel();
+					
+					for (int i = 0; i < comboBoxModel.getSize(); i++) {
+						Client currentClient = comboBoxModel.getElementAt(i);
+						if (currentClient.equals(newClient)) {
+							clientComboBox.setSelectedIndex(i);
+						}
+					}
+					
+					btnSaveNew.setVisible(false);
+					btnCancel.setVisible(false);
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(btnSaveNew, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		btnSaveNew.setBounds(254, 36, 101, 27);
+		getContentPane().add(btnSaveNew);
+		btnSaveNew.setVisible(false);
+		
+		JButton btnCreateNew = new JButton("Create new");
+		btnCreateNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clientComboBox.setSelectedIndex(-1);
+				clientComboBox.setVisible(false);
+				
+				clientNameField.setVisible(true);
+				clientNameField.setText("");
+				
+				cityField.setEditable(true);
+				cityField.setText("");
+				
+				addressField.setEditable(true);
+				addressField.setText("");
+				
+				btnSaveNew.setVisible(true);
+				btnCancel.setVisible(true);
+			}
+		});
+		btnCreateNew.setBounds(360, 7, 101, 27);
+		getContentPane().add(btnCreateNew);
 		
 		JLabel cityInfoLabel = new JLabel("City:");
 		cityInfoLabel.setBounds(12, 41, 27, 17);
@@ -110,7 +183,37 @@ public class NewOrderFrame extends JFrame {
 		JButton btnRemove = new JButton("Remove");
 		btnRemove.setBounds(106, 94, 89, 27);
 		getContentPane().add(btnRemove);
-
 		
+		JLabel pricePerUnitInfoLabel = new JLabel("Price per unit:");
+		pricePerUnitInfoLabel.setBounds(271, 217, 84, 17);
+		getContentPane().add(pricePerUnitInfoLabel);
+		
+		JLabel pricePerUnitLabel = new JLabel("0");
+		pricePerUnitLabel.setBounds(401, 217, 60, 17);
+		getContentPane().add(pricePerUnitLabel);
+		
+		JLabel totalInfoLabel = new JLabel("Total:");
+		totalInfoLabel.setFont(new Font("Dialog", Font.BOLD, 15));
+		totalInfoLabel.setBounds(271, 242, 60, 17);
+		getContentPane().add(totalInfoLabel);
+		
+		clientNameField = new JTextField();
+		clientNameField.setText("");
+		clientNameField.setBounds(106, 10, 195, 21);
+		getContentPane().add(clientNameField);
+		clientNameField.setColumns(10);
+		
+		btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clientComboBox.setVisible(true);
+				clientNameField.setVisible(false);
+				btnSaveNew.setVisible(false);
+				btnCancel.setVisible(false);
+			}
+		});
+		btnCancel.setBounds(360, 36, 101, 27);
+		getContentPane().add(btnCancel);
+		btnCancel.setVisible(false);
 	}
 }

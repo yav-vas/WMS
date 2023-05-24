@@ -22,4 +22,13 @@ public class NewOrderController {
 		
 		return model;
 	}
+	
+	public static void btnSaveNew(Client newClient) {
+		try {
+			services.ClientService.addNewClient(newClient);
+		} catch (FileNotFoundException ex) {
+			throw new IllegalArgumentException("Data file not found!");
+		}
+		
+	}
 }

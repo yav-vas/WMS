@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Objects;
+
 public class Client {
 
 	private String clientName;
@@ -60,6 +62,20 @@ public class Client {
 	@Override
 	public String toString() {
 		return clientName;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Client other = (Client) obj;
+		return Objects.equals(address, other.address) && Objects.equals(city, other.city)
+				&& Objects.equals(clientName, other.clientName)
+				&& Double.doubleToLongBits(debt) == Double.doubleToLongBits(other.debt);
 	}
 }
 

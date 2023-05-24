@@ -5,14 +5,26 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
-public class SalesRepresentative extends JFrame  {
+public class SalesRepresentativeFrame extends JFrame  {
+	
 	private JTextField txtOrders;
-	public SalesRepresentative() {
+	
+	public SalesRepresentativeFrame() {
+		setTitle("Sales representative");
+		setBounds(100, 100, 435, 300);
 		getContentPane().setLayout(null);
 		
 		JButton btnNewButton = new JButton("New Order");
-		btnNewButton.setBounds(180, 20, 233, 193);
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				NewOrderFrame newOrderInternalFrame = new NewOrderFrame();
+				newOrderInternalFrame.setVisible(true);
+			}
+		});
+		btnNewButton.setBounds(180, 20, 234, 101);
 		getContentPane().add(btnNewButton);
 		
 		txtOrders = new JTextField();
@@ -28,10 +40,5 @@ public class SalesRepresentative extends JFrame  {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 20, 121, 233);
 		getContentPane().add(scrollPane);
-	}
-	private static class __Tmp {
-		private static void __tmp() {
-			  javax.swing.JPanel __wbp_panel = new javax.swing.JPanel();
-		}
 	}
 }

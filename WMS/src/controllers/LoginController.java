@@ -18,7 +18,16 @@ public class LoginController {
 			if (user == null) {
 				throw new IllegalArgumentException("Wrong username or password!");
 			} else {
-				return new AdminFrame(user.getRealName(), UserService.getAllUsers());
+				switch (user.getUserRole()) {
+					case ADMIN:
+						return new AdminFrame(user.getRealName(), UserService.getAllUsers());
+					case SALES_REPRESENTATIVE:
+						return new SalesRepresentativeFrame();
+					case DRIVER:
+						return new DriverFrame(user.getRealName());
+					default:
+						return null;
+				}
 			}
 		} catch (FileNotFoundException ex) {
 			throw new IllegalArgumentException("Data file not found!");

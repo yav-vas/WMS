@@ -1,20 +1,25 @@
 package repositories;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import models.User;
 
 public class UserRepository {
+	
+	public static User readUser(Scanner reader) throws FileNotFoundException {
+		User user = new User(reader.next(), reader.next(), reader.next(), reader.next());
+		
+		return user;
+	}
 
 	public static User findUserByUsernameAndPassword(String username, String password) throws FileNotFoundException {
 		File file = new File("data/users.txt");
 		Scanner usersFile = new Scanner(file);
 		
 		while(usersFile.hasNext()) {
-			User currentUser = new User(usersFile.next(), usersFile.next(), usersFile.next(), usersFile.next());
+			User currentUser = readUser(usersFile);
 			
 			if (currentUser.getUsername().equals(username) && currentUser.getPassword().equals(password)) {
 				return currentUser;
@@ -33,7 +38,7 @@ public class UserRepository {
 		ArrayList<User> users = new ArrayList<User>();
 		
 		while(usersFile.hasNext()) {
-			User currentUser = new User(usersFile.next(), usersFile.next(), usersFile.next(), usersFile.next());
+			User currentUser = readUser(usersFile);
 			users.add(currentUser);
 		}
 		
@@ -70,7 +75,7 @@ public class UserRepository {
 		File tmpFile = new File("data/tmp.txt");
 		
 		while(usersFile.hasNext()) {
-			User currentUser = new User(usersFile.next(), usersFile.next(), usersFile.next(), usersFile.next());
+			User currentUser = readUser(usersFile);
 			if (currentUser.equals(oldUser)) {
 				addUser(tmpWriter, newUser);
 			} else {
@@ -94,7 +99,8 @@ public class UserRepository {
 		Scanner usersFile = new Scanner(file);
 		
 		while(usersFile.hasNext()) {
-			User currentUser = new User(usersFile.next(), usersFile.next(), usersFile.next(), usersFile.next());
+			User currentUser = readUser(usersFile);
+			
 			if (currentUser.getUsername().equals(username)) {
 				usersFile.close();
 				return true;

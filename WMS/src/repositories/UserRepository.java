@@ -71,8 +71,8 @@ public class UserRepository {
 		
 		File file = new File("data/users.txt");
 		Scanner usersFile = new Scanner(file);
-		PrintWriter tmpWriter = new PrintWriter("data/tmp.txt");
-		File tmpFile = new File("data/tmp.txt");
+		PrintWriter tmpWriter = new PrintWriter("data/tmpUsers.txt");
+		File tmpFile = new File("data/tmpUsers.txt");
 		
 		while(usersFile.hasNext()) {
 			User currentUser = readUser(usersFile);

@@ -1,22 +1,37 @@
 package views;
 
-import java.util.*;
 import javax.swing.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.Font;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
+import java.awt.*;
+import java.awt.event.*;
+
 
 import models.Client;
+import models.Product;
+import models.OrderProduct;
+import models.Order;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 public class NewOrderFrame extends JFrame {
+	
+	private Order order = new Order();
+	
 	private JTextField cityField;
 	private JTextField addressField;
 	
 	private JButton btnSaveNew;
 	private JButton btnCancel;
+	
 	private JTextField clientNameField;
+	
+	private JButton btnRemove;
+	private JList<OrderProduct> productsList;
+	
+	private JComboBox<Product> productComboBox;
+	private JLabel availableQuantityLabel;
+	private JLabel pricePerUnitLabel;
+	private JSpinner orderQuantitySpinner;
+	private JLabel totalLabel;
 
 	/**
 	 * Create the frame.
@@ -24,7 +39,7 @@ public class NewOrderFrame extends JFrame {
 	public NewOrderFrame() {
 		setResizable(false);
 		setTitle("New order creation wizard");
-		setBounds(100, 100, 475, 300);
+		setBounds(100, 100, 475, 350);
 		getContentPane().setLayout(null);
 		
 		JLabel clientNameInfoLabel = new JLabel("Client name:");
@@ -46,13 +61,15 @@ public class NewOrderFrame extends JFrame {
 				addressField.setEditable(false);
 				
 				btnSaveNew.setVisible(false);
+				
+				order.setClient(currentClient);
 			}
 		});
 		clientComboBox.setBounds(106, 7, 195, 26);
 		getContentPane().add(clientComboBox);
 		
 		try {
-			clientComboBox.setModel(controllers.NewOrderController.loadComboBox());
+			clientComboBox.setModel(controllers.NewOrderController.loadClientComboBox());
 			clientComboBox.setSelectedIndex(-1);
 		} catch (IllegalArgumentException ex) {
 			JOptionPane.showMessageDialog(clientComboBox, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
@@ -73,7 +90,7 @@ public class NewOrderFrame extends JFrame {
 					
 					clientNameField.setVisible(false);
 					clientComboBox.setVisible(true);
-					clientComboBox.setModel(controllers.NewOrderController.loadComboBox());
+					clientComboBox.setModel(controllers.NewOrderController.loadClientComboBox());
 					
 					ComboBoxModel<Client> comboBoxModel = clientComboBox.getModel();
 					
@@ -139,16 +156,64 @@ public class NewOrderFrame extends JFrame {
 		addressField.setBounds(106, 68, 355, 21);
 		getContentPane().add(addressField);
 		
+		btnRemove = new JButton("Remove");
+		btnRemove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				order.removeProduct(productsList.getSelectedValue());
+				((DefaultListModel<OrderProduct>) productsList.getModel()).removeElementAt(productsList.getSelectedIndex());
+				productsList.setSelectedIndex(-1);
+				totalLabel.setText(Double.toString(order.getTotal()));
+			}
+		});
+		btnRemove.setBounds(106, 94, 89, 27);
+		getContentPane().add(btnRemove);
+		btnRemove.setVisible(false);
+		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(12, 128, 241, 131);
+		scrollPane.setBounds(12, 128, 241, 181);
 		getContentPane().add(scrollPane);
 		
-		JList productsList = new JList();
+		productsList = new JList<OrderProduct>();
+		productsList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (productsList.getSelectedIndex() == -1)
+					btnRemove.setVisible(false);
+				else
+					btnRemove.setVisible(true);
+			}
+		});
+		productsList.setModel(new DefaultListModel<OrderProduct>());
 		scrollPane.setViewportView(productsList);
 		
 		JButton btnAddProduct = new JButton("+");
 		btnAddProduct.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				DefaultListModel<OrderProduct> model = (DefaultListModel<OrderProduct>) productsList.getModel();
+				
+				OrderProduct currentProduct = new OrderProduct((Product) productComboBox.getSelectedItem(), (Integer) orderQuantitySpinner.getValue());
+				model.addElement(currentProduct);
+				order.addProduct(currentProduct);
+				
+				totalLabel.setText(Double.toString(order.getTotal()));
+				
+				try {
+					controllers.NewOrderController.btnAddProduct(currentProduct);
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(productComboBox, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				orderQuantitySpinner.setValue((Integer) 0);;
+				availableQuantityLabel.setText("0");
+				pricePerUnitLabel.setText("0");
+				productComboBox.setSelectedIndex(-1);
+				
+				try {
+					productComboBox.setModel(controllers.NewOrderController.loadProductComboBox());
+					productComboBox.setSelectedIndex(-1);
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(productComboBox, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+					dispose();
+				}
 			}
 		});
 		btnAddProduct.setFont(new Font("Dialog", Font.BOLD, 20));
@@ -159,37 +224,59 @@ public class NewOrderFrame extends JFrame {
 		productNameLabel.setBounds(271, 130, 39, 17);
 		getContentPane().add(productNameLabel);
 		
-		JComboBox productNameComboBox = new JComboBox();
-		productNameComboBox.setBounds(328, 125, 133, 26);
-		getContentPane().add(productNameComboBox);
+		productComboBox = new JComboBox<Product>();
+		productComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				productsList.setSelectedIndex(-1);
+				btnRemove.setVisible(false);
+			}
+		});
+		productComboBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (productComboBox.getSelectedIndex() == -1)
+					return;
+				
+				Product currentProduct = (Product) productComboBox.getSelectedItem();
+				
+				availableQuantityLabel.setText(Integer.toString(currentProduct.getAvailableToOrderQuantity()));
+				pricePerUnitLabel.setText(Double.toString(currentProduct.getUnitPrice()));
+				orderQuantitySpinner.setModel(new SpinnerNumberModel(0, 0, currentProduct.getAvailableToOrderQuantity(), 1));
+			}
+		});
+		productComboBox.setBounds(328, 125, 133, 26);
+		getContentPane().add(productComboBox);
+		
+		try {
+			productComboBox.setModel(controllers.NewOrderController.loadProductComboBox());
+			productComboBox.setSelectedIndex(-1);
+		} catch (IllegalArgumentException ex) {
+			JOptionPane.showMessageDialog(productComboBox, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+			dispose();
+		}
 		
 		JLabel orderQulantityLabel = new JLabel("Order quantity:");
 		orderQulantityLabel.setBounds(271, 159, 101, 17);
 		getContentPane().add(orderQulantityLabel);
 		
-		JSpinner spinner = new JSpinner();
-		spinner.setModel(new SpinnerNumberModel(0, 0, 100, 1));
-		spinner.setBounds(390, 157, 71, 22);
-		getContentPane().add(spinner);
+		orderQuantitySpinner = new JSpinner();
+		orderQuantitySpinner.setModel(new SpinnerNumberModel(0, 0, 0, 1));
+		orderQuantitySpinner.setBounds(390, 157, 71, 22);
+		getContentPane().add(orderQuantitySpinner);
 		
 		JLabel availableQuantityInfoLabel = new JLabel("Available quantity:");
 		availableQuantityInfoLabel.setBounds(271, 188, 114, 17);
 		getContentPane().add(availableQuantityInfoLabel);
 		
-		JLabel availableQuantityLabel = new JLabel("0");
+		availableQuantityLabel = new JLabel("0");
 		availableQuantityLabel.setBounds(401, 188, 60, 17);
 		getContentPane().add(availableQuantityLabel);
 		
-		JButton btnRemove = new JButton("Remove");
-		btnRemove.setBounds(106, 94, 89, 27);
-		getContentPane().add(btnRemove);
-		
 		JLabel pricePerUnitInfoLabel = new JLabel("Price per unit:");
-		pricePerUnitInfoLabel.setBounds(271, 217, 84, 17);
+		pricePerUnitInfoLabel.setBounds(271, 213, 84, 17);
 		getContentPane().add(pricePerUnitInfoLabel);
 		
-		JLabel pricePerUnitLabel = new JLabel("0");
-		pricePerUnitLabel.setBounds(401, 217, 60, 17);
+		pricePerUnitLabel = new JLabel("0");
+		pricePerUnitLabel.setBounds(401, 213, 60, 17);
 		getContentPane().add(pricePerUnitLabel);
 		
 		JLabel totalInfoLabel = new JLabel("Total:");
@@ -214,6 +301,18 @@ public class NewOrderFrame extends JFrame {
 		});
 		btnCancel.setBounds(360, 36, 101, 27);
 		getContentPane().add(btnCancel);
+		
+		JButton btnOrder = new JButton("Order");
+		btnOrder.setBounds(377, 271, 84, 38);
+		getContentPane().add(btnOrder);
+		
+		totalLabel = new JLabel("0");
+		totalLabel.setBounds(328, 243, 133, 17);
+		getContentPane().add(totalLabel);
+		
+		JButton btnCancelOrder = new JButton("Cancel");
+		btnCancelOrder.setBounds(271, 271, 84, 38);
+		getContentPane().add(btnCancelOrder);
 		btnCancel.setVisible(false);
 	}
 }

@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Objects;
+
 public class Product {
 
 	private String productName;
@@ -26,6 +28,10 @@ public class Product {
 		setAvailableToOrderQuantity(availableToOrderQuantity);
 		setOrderedQuantity(orderedQuantity);
 		setTravellingQuantity(travellingQuantity);
+	}
+	
+	public Product(Product product) {
+		this(product.getProductName(), product.getUnitPrice(), product.getWarehouseQuantity(), product.getAvailableToOrderQuantity(), product.getOrderedQuantity(), product.getTravellingQuantity());
 	}
 
 	public String getProductName() {
@@ -75,7 +81,25 @@ public class Product {
 	public void setTravellingQuantity(int travellingQuantity) {
 		this.travellingQuantity = travellingQuantity;
 	}
-	
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		return availableToOrderQuantity == other.availableToOrderQuantity && orderedQuantity == other.orderedQuantity
+				&& Objects.equals(productName, other.productName) && travellingQuantity == other.travellingQuantity
+				&& Double.doubleToLongBits(unitPrice) == Double.doubleToLongBits(other.unitPrice)
+				&& warehouseQuantity == other.warehouseQuantity;
+	}
+
+	@Override
+	public String toString() {
+		return productName;
+	}
 	
 }

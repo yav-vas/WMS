@@ -11,11 +11,11 @@ public class ClientRepository {
 		try {
 			Client client = new Client(reader.nextLine(), reader.nextLine(), reader.nextLine(), Double.parseDouble(reader.nextLine()));
 			if (!reader.nextLine().equals("----------")) {
-				throw new IllegalArgumentException("Wrong file format! User information does not end as expected.");
+				throw new IllegalArgumentException("Wrong file format!");
 			}
 			return client;
 		} catch (InputMismatchException ex) {
-			throw new IllegalArgumentException("Wrong file format! The client's debt is not a decimal number.");
+			throw new IllegalArgumentException("Wrong file format!");
 		}
 	}
 	
@@ -51,8 +51,8 @@ public class ClientRepository {
 	public static void addNewClient(Client newClient) throws FileNotFoundException {
 		File file = new File("data/clients.txt");
 		Scanner clientsFile = new Scanner(file);
-		PrintWriter tmpWriter = new PrintWriter("data/tmp.txt");
-		File tmpFile = new File("data/tmp.txt");
+		PrintWriter tmpWriter = new PrintWriter("data/tmpClients.txt");
+		File tmpFile = new File("data/tmpClients.txt");
 		
 		while (clientsFile.hasNext()) {
 			Client currentClient = readClient(clientsFile);

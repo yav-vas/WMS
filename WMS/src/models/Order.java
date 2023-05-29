@@ -5,9 +5,9 @@ import java.math.*;
 
 public class Order {
 
-	private Client client;
+	private String clientName;
 	private ArrayList<OrderProduct> products;
-	private User driver;
+	private String driverName; // the real name of the driver
 	
 	private double total;
 	
@@ -16,23 +16,23 @@ public class Order {
 		setTotal(0);
 	}
 	
-	public Order(Client client, ArrayList<OrderProduct> products) {
+	public Order(String clientName, ArrayList<OrderProduct> products) {
 		this();
-		setClient(client);
+		setClientName(clientName);
 		setProducts(products);
 	}
 	
-	public Order(Client client, ArrayList<OrderProduct> products, User driver) {
+	public Order(Client client, ArrayList<OrderProduct> products, String driverName) {
 		this();
-		setDriver(driver);
+		setDriverName(driverName);
 	}
 	
-	public Client getClient() {
-		return client;
+	public String getClientName() {
+		return clientName;
 	}
 	
-	public void setClient(Client client) {
-		this.client = client;
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
 	}
 	
 	public ArrayList<OrderProduct> getProducts() {
@@ -43,16 +43,12 @@ public class Order {
 		this.products = products;
 	}
 	
-	public User getDriver() {
-		return driver;
+	public String getDriverName() {
+		return driverName;
 	}
 	
-	public void setDriver(User driver) {
-		this.driver = driver;
-		
-		if (driver.getUserRole() != UserRole.DRIVER) {
-			throw new IllegalArgumentException("The user assigned is not a driver! Select a user of type driver!");
-		}
+	public void setDriverName(String driverName) {
+		this.driverName = driverName;
 	}
 	
 	public double getTotal() {
@@ -60,25 +56,28 @@ public class Order {
 	}
 	
 	public void setTotal(double total) {
+		if (total < 0.01)
+			this.total = 0;
+		
 		this.total = total;
 	}
 	
 	public void addProduct(OrderProduct product) {
 		products.add(product);
-		total += product.getCost();
 		
-		BigDecimal totalBigDecimal = new BigDecimal(Double.toString(total));
-		totalBigDecimal = totalBigDecimal.setScale(2, RoundingMode.CEILING);
-		total = totalBigDecimal.doubleValue();
+		BigDecimal totalBigDecimal = new BigDecimal(total);
+		totalBigDecimal = totalBigDecimal.add(new BigDecimal(product.getCost()));
+		totalBigDecimal = totalBigDecimal.setScale(2, RoundingMode.DOWN);
+		setTotal(totalBigDecimal.doubleValue());
 	}
 	
 	public void removeProduct(OrderProduct product) {
 		products.remove(product);
-		total -= product.getCost();
 		
-		BigDecimal totalBigDecimal = new BigDecimal(Double.toString(total));
-		totalBigDecimal = totalBigDecimal.setScale(2, RoundingMode.FLOOR);
-		total = totalBigDecimal.doubleValue();
+		BigDecimal totalBigDecimal = new BigDecimal(total);
+		totalBigDecimal = totalBigDecimal.subtract(new BigDecimal(product.getCost()));
+		totalBigDecimal = totalBigDecimal.setScale(2, RoundingMode.DOWN);
+		setTotal(totalBigDecimal.doubleValue());
 	}
 	
 }

@@ -1,11 +1,8 @@
 package models;
 
-import java.util.Objects;
-
 public class Product {
 
 	private String productName;
-	
 	private double unitPrice;
 	
 	private int warehouseQuantity; // in the warehouse
@@ -82,20 +79,7 @@ public class Product {
 		this.travellingQuantity = travellingQuantity;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Product other = (Product) obj;
-		return availableToOrderQuantity == other.availableToOrderQuantity && orderedQuantity == other.orderedQuantity
-				&& Objects.equals(productName, other.productName) && travellingQuantity == other.travellingQuantity
-				&& Double.doubleToLongBits(unitPrice) == Double.doubleToLongBits(other.unitPrice)
-				&& warehouseQuantity == other.warehouseQuantity;
-	}
+	// TODO: ensure unique names are given to the products, written to the database
 
 	@Override
 	public String toString() {

@@ -52,7 +52,9 @@ public class ProductRepository {
 		return products.toArray(new Product[products.size()]);
 	}
 
-	public static void overwriteExistingProduct(Product oldProduct, Product newProduct) throws FileNotFoundException {
+	// if orderedQuantityChange is positive => ordered quantity
+	// if orderedQuantityChange is negative => freed quantity
+	public static void editProductQuantity(String productName, double unitPrice, int orderedQuantityChange) throws FileNotFoundException {
 		File file = new File("data/products.txt");
 		Scanner productsFile = new Scanner(file);
 		PrintWriter tmpWriter = new PrintWriter("data/tmpProducts.txt");
@@ -61,7 +63,10 @@ public class ProductRepository {
 		while (productsFile.hasNext()) {
 			Product currentProduct = readProduct(productsFile);
 			
-			if (currentProduct.equals(oldProduct)) {
+			if (currentProduct.getProductName().equals(productName)) {
+				Product newProduct = new Product(currentProduct);
+				newProduct.setAvailableToOrderQuantity(currentProduct.getAvailableToOrderQuantity() - orderedQuantityChange);
+				newProduct.setOrderedQuantity(currentProduct.getOrderedQuantity() + orderedQuantityChange);
 				writeProduct(tmpWriter, newProduct);
 			} else {
 				writeProduct(tmpWriter, currentProduct);

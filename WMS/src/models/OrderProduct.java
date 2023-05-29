@@ -1,8 +1,13 @@
 package models;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class OrderProduct {
 
-	private Product product;
+	private String productName;
+	private double unitPrice;
+	
 	private int orderQuantity;
 	
 	public OrderProduct() {
@@ -10,16 +15,30 @@ public class OrderProduct {
 	}
 	
 	public OrderProduct(Product product, int orderQuantity) {
-		setProduct(product);
+		setProductName(product.getProductName());
+		setUnitPrice(product.getUnitPrice());
+		setOrderQuantity(orderQuantity);
+	}
+	
+	public OrderProduct(String productName, int orderQuantity) {
+		setProductName(productName);
 		setOrderQuantity(orderQuantity);
 	}
 
-	public Product getProduct() {
-		return product;
+	public String getProductName() {
+		return productName;
 	}
 
-	public void setProduct(Product product) {
-		this.product = product;
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+	
+	public double getUnitPrice() {
+		return unitPrice;
+	}
+	
+	public void setUnitPrice(double unitPrice) {
+		this.unitPrice = unitPrice;
 	}
 
 	public int getOrderQuantity() {
@@ -31,12 +50,15 @@ public class OrderProduct {
 	}
 	
 	public double getCost() {
-		return product.getUnitPrice() * orderQuantity;
+		BigDecimal costBigDecimal = new BigDecimal(unitPrice);
+		costBigDecimal = costBigDecimal.multiply(new BigDecimal(orderQuantity));
+		costBigDecimal.setScale(2, RoundingMode.DOWN);
+		return costBigDecimal.doubleValue();
 	}
 	
 	@Override
 	public String toString() {
-		return product.getProductName() + " - " + orderQuantity;
+		return productName + " - " + orderQuantity;
 	}
 	
 }

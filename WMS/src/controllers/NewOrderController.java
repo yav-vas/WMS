@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import javax.swing.*;
 
 import models.Client;
+import models.Order;
 import models.OrderProduct;
 import models.Product;
 
@@ -52,6 +53,22 @@ public class NewOrderController {
 	public static void btnAddProduct(OrderProduct product) {
 		try {
 			services.ProductService.orderProductQuantity(product);
+		} catch (FileNotFoundException ex) {
+			throw new IllegalArgumentException("Data file not found!");
+		}
+	}
+	
+	public static void btnRemoveProduct(OrderProduct product) {
+		try {
+			services.ProductService.freeProductQuantity(product);
+		} catch (FileNotFoundException ex) {
+			throw new IllegalArgumentException("Data file not found!");
+		}
+	}
+	
+	public static void btnOrder(Order order) {
+		try {
+			services.OrderService.addNewOrder(order);
 		} catch (FileNotFoundException ex) {
 			throw new IllegalArgumentException("Data file not found!");
 		}

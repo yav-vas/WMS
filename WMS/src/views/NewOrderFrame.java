@@ -10,6 +10,9 @@ import models.Product;
 import models.OrderProduct;
 import models.Order;
 import javax.swing.event.ListSelectionListener;
+
+import controllers.NewOrderController;
+
 import javax.swing.event.ListSelectionEvent;
 
 public class NewOrderFrame extends JFrame {
@@ -62,7 +65,7 @@ public class NewOrderFrame extends JFrame {
 				
 				btnSaveNew.setVisible(false);
 				
-				order.setClient(currentClient);
+				order.setClientName(currentClient.getClientName());
 			}
 		});
 		clientComboBox.setBounds(106, 7, 195, 26);
@@ -159,10 +162,26 @@ public class NewOrderFrame extends JFrame {
 		btnRemove = new JButton("Remove");
 		btnRemove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				order.removeProduct(productsList.getSelectedValue());
+				OrderProduct currentProduct = productsList.getSelectedValue();
+				
+				order.removeProduct(currentProduct);
 				((DefaultListModel<OrderProduct>) productsList.getModel()).removeElementAt(productsList.getSelectedIndex());
 				productsList.setSelectedIndex(-1);
 				totalLabel.setText(Double.toString(order.getTotal()));
+				
+				try {
+					controllers.NewOrderController.btnRemoveProduct(currentProduct);
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(btnRemove, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				try {
+					productComboBox.setModel(controllers.NewOrderController.loadProductComboBox());
+					productComboBox.setSelectedIndex(-1);
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(btnRemove, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+					dispose();
+				}
 			}
 		});
 		btnRemove.setBounds(106, 94, 89, 27);
@@ -178,8 +197,14 @@ public class NewOrderFrame extends JFrame {
 			public void valueChanged(ListSelectionEvent e) {
 				if (productsList.getSelectedIndex() == -1)
 					btnRemove.setVisible(false);
-				else
+				else {
 					btnRemove.setVisible(true);
+					
+					orderQuantitySpinner.setValue((Integer) 0);;
+					availableQuantityLabel.setText("0");
+					pricePerUnitLabel.setText("0");
+					productComboBox.setSelectedIndex(-1);
+				}
 			}
 		});
 		productsList.setModel(new DefaultListModel<OrderProduct>());
@@ -199,7 +224,7 @@ public class NewOrderFrame extends JFrame {
 				try {
 					controllers.NewOrderController.btnAddProduct(currentProduct);
 				} catch (IllegalArgumentException ex) {
-					JOptionPane.showMessageDialog(productComboBox, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(btnAddProduct, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
 				}
 				
 				orderQuantitySpinner.setValue((Integer) 0);;
@@ -211,7 +236,7 @@ public class NewOrderFrame extends JFrame {
 					productComboBox.setModel(controllers.NewOrderController.loadProductComboBox());
 					productComboBox.setSelectedIndex(-1);
 				} catch (IllegalArgumentException ex) {
-					JOptionPane.showMessageDialog(productComboBox, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(btnAddProduct, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
 					dispose();
 				}
 			}
@@ -227,6 +252,9 @@ public class NewOrderFrame extends JFrame {
 		productComboBox = new JComboBox<Product>();
 		productComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (productComboBox.getSelectedIndex() == -1)
+					return;
+				
 				productsList.setSelectedIndex(-1);
 				btnRemove.setVisible(false);
 			}
@@ -303,6 +331,16 @@ public class NewOrderFrame extends JFrame {
 		getContentPane().add(btnCancel);
 		
 		JButton btnOrder = new JButton("Order");
+		btnOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					NewOrderController.btnOrder(order);
+					dispose();
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(productComboBox, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		btnOrder.setBounds(377, 271, 84, 38);
 		getContentPane().add(btnOrder);
 		
@@ -311,6 +349,12 @@ public class NewOrderFrame extends JFrame {
 		getContentPane().add(totalLabel);
 		
 		JButton btnCancelOrder = new JButton("Cancel");
+		btnCancelOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				dispose();
+			}
+		});
 		btnCancelOrder.setBounds(271, 271, 84, 38);
 		getContentPane().add(btnCancelOrder);
 		btnCancel.setVisible(false);

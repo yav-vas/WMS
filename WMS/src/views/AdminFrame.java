@@ -258,7 +258,6 @@ public class AdminFrame extends JFrame {
 		usersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		usersList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				System.out.println("Value changed!");
 				userInfoPanel.setVisible(true);
 				btnSaveChanges.setEnabled(false);
 				btnDeleteUser.setEnabled(true);

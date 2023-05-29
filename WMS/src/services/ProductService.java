@@ -15,11 +15,11 @@ public class ProductService {
 	}
 	
 	public static void orderProductQuantity(OrderProduct product) throws FileNotFoundException {
-		Product orderedProduct = product.getProduct();
-		Product newProduct = new Product(orderedProduct);
-		newProduct.setAvailableToOrderQuantity(orderedProduct.getAvailableToOrderQuantity() - product.getOrderQuantity());
-		newProduct.setOrderedQuantity(newProduct.getOrderedQuantity() + product.getOrderQuantity());
-		ProductRepository.overwriteExistingProduct(orderedProduct, newProduct);
+		ProductRepository.editProductQuantity(product.getProductName(), product.getUnitPrice(), product.getOrderQuantity());
+	}
+
+	public static void freeProductQuantity(OrderProduct product) throws FileNotFoundException {
+		ProductRepository.editProductQuantity(product.getProductName(), product.getUnitPrice(), -product.getOrderQuantity());
 	}
 	
 }

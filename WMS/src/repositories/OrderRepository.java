@@ -12,6 +12,14 @@ public class OrderRepository {
 	public static Order readOrder(Scanner reader) {
 		try {
 			Order currentOrder = new Order();
+			
+			String salesRepNameLine = reader.nextLine();
+			
+			if (salesRepNameLine.equals("null")) {
+				throw new IllegalArgumentException("Sales representative name not set!");
+			}
+			
+			currentOrder.setSalesRepName(salesRepNameLine);
 			currentOrder.setClientName(reader.nextLine());
 			
 			int productsCount = Integer.parseInt(reader.nextLine());
@@ -40,6 +48,7 @@ public class OrderRepository {
 	public static void writerOrder(PrintWriter writer, Order order) {
 		StringBuilder orderString = new StringBuilder();
 		
+		orderString.append(order.getSalesRepName() + "\n");
 		orderString.append(order.getClientName() + "\n");
 		orderString.append(order.getProducts().size() + "\n");
 		

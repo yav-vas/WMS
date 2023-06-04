@@ -22,7 +22,9 @@ public class LoginController {
 					case ADMIN:
 						return new AdminFrame(user.getRealName(), UserService.getAllUsers());
 					case SALES_REPRESENTATIVE:
-						return new SalesRepresentativeFrame();
+						return new SalesRepresentativeFrame(user.getRealName());
+					case OPERATOR:
+						return new OperatorFrame(user.getRealName());
 					case DRIVER:
 						return new DriverFrame(user.getRealName());
 					default:

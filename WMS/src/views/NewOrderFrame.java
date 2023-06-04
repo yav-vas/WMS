@@ -215,6 +215,18 @@ public class NewOrderFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				DefaultListModel<OrderProduct> model = (DefaultListModel<OrderProduct>) productsList.getModel();
 				
+				// no product is selected
+				if (productComboBox.getSelectedIndex() == -1) {
+					JOptionPane.showMessageDialog(btnAddProduct, "No product selected to be added to the order!", "An error occured", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				// zero order quantity is selected
+				if (orderQuantitySpinner.getValue().equals((Integer) 0)) {
+					JOptionPane.showMessageDialog(btnAddProduct, "Zero order quantity is selected!", "An error occured", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
 				OrderProduct currentProduct = new OrderProduct((Product) productComboBox.getSelectedItem(), (Integer) orderQuantitySpinner.getValue());
 				model.addElement(currentProduct);
 				order.addProduct(currentProduct);
@@ -334,6 +346,21 @@ public class NewOrderFrame extends JFrame {
 		btnOrder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					if (order.getClientName() == null) {
+						JOptionPane.showMessageDialog(btnAddProduct, "No client is selected!", "An error occured", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					if (order.getProducts().size() == 0) {
+						JOptionPane.showMessageDialog(btnAddProduct, "No products selected!", "An error occured", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					// still in client editing mode
+					if (clientComboBox.isVisible() == false) {
+						JOptionPane.showMessageDialog(btnAddProduct, "Finish new client creation procedure", "An error occured", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 					NewOrderController.btnOrder(order);
 					dispose();
 				} catch (IllegalArgumentException ex) {
@@ -358,5 +385,10 @@ public class NewOrderFrame extends JFrame {
 		btnCancelOrder.setBounds(271, 271, 84, 38);
 		getContentPane().add(btnCancelOrder);
 		btnCancel.setVisible(false);
+	}
+	
+	public NewOrderFrame(String realName) {
+		this();
+		order.setSalesRepName(realName);
 	}
 }

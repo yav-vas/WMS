@@ -5,6 +5,7 @@ import java.math.*;
 
 public class Order {
 
+	private String salesRepName;
 	private String clientName;
 	private ArrayList<OrderProduct> products;
 	private String driverName; // the real name of the driver
@@ -25,6 +26,14 @@ public class Order {
 	public Order(Client client, ArrayList<OrderProduct> products, String driverName) {
 		this();
 		setDriverName(driverName);
+	}
+	
+	public String getSalesRepName() {
+		return salesRepName;
+	}
+	
+	public void setSalesRepName(String salesRepName) {
+		this.salesRepName = salesRepName;
 	}
 	
 	public String getClientName() {

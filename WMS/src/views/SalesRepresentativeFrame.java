@@ -8,14 +8,16 @@ import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 
 import models.User;
+import javax.swing.SwingConstants;
 
 public class SalesRepresentativeFrame extends JFrame  {
 	
+	JLabel lblWelcomeRealName;
 	String loggedInUserRealName;
 	
 	public SalesRepresentativeFrame() {
 		setTitle("Sales representative");
-		setBounds(100, 100, 435, 300);
+		setBounds(100, 100, 435, 140);
 		getContentPane().setLayout(null);
 		
 		JButton btnNewButton = new JButton("New Order");
@@ -25,20 +27,18 @@ public class SalesRepresentativeFrame extends JFrame  {
 				newOrderFrame.setVisible(true);
 			}
 		});
-		btnNewButton.setBounds(189, 57, 234, 39);
+		btnNewButton.setBounds(12, 41, 411, 55);
 		getContentPane().add(btnNewButton);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(223, 166, 158, 239);
-		getContentPane().add(scrollPane);
-		
-		JLabel lblMyOrders = new JLabel("My orders:");
-		lblMyOrders.setBounds(12, 12, 158, 17);
-		getContentPane().add(lblMyOrders);
+		lblWelcomeRealName = new JLabel("Welcome, realName!");
+		lblWelcomeRealName.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWelcomeRealName.setBounds(12, 12, 411, 17);
+		getContentPane().add(lblWelcomeRealName);
 	}
 	
 	public SalesRepresentativeFrame(String realName) {
 		this();
 		loggedInUserRealName = new String(realName);
+		lblWelcomeRealName.setText("Welcome, " + realName + "!");
 	}
 }

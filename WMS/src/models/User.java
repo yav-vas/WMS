@@ -1,5 +1,6 @@
 package models;
 
+import java.util.*;
 import java.io.FileNotFoundException;
 
 public class User {
@@ -27,6 +28,24 @@ public class User {
 	public void setUsername(String username) throws FileNotFoundException {
 		if (username.length() == 0)
 			throw new IllegalArgumentException("Username field cannot be empty!");
+		
+		char[] usernameCharArray = username.toCharArray();
+		Stack<Character> usernameStack = new Stack<Character>();
+		
+		for (int i = 0; i < usernameCharArray.length; i++) {
+			if (usernameCharArray[i] == '(')
+				usernameStack.push(usernameCharArray[i]);
+			else if (usernameCharArray[i] == ')') {
+				if (usernameStack.isEmpty() == false)
+					usernameStack.pop();
+				else
+					throw new IllegalArgumentException("Username has parenthesis, which are not closed!");
+			}
+		}
+		
+		if (usernameStack.isEmpty() == false) {
+			throw new IllegalArgumentException("Username has parenthesis, which are not closed!");
+		}
 		
 		this.username = username;
 	}

@@ -14,11 +14,13 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.SwingConstants;
 
 public class OperatorFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField;
+	private JLabel lblWelcome;
 
 	/**
 	 * Create the frame.
@@ -92,9 +94,15 @@ public class OperatorFrame extends JFrame {
 		btnNewButton_1.setToolTipText("");
 		btnNewButton_1.setBounds(381, 225, 72, 32);
 		contentPane.add(btnNewButton_1);
+		
+		lblWelcome = new JLabel("Welcome, realName!");
+		lblWelcome.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWelcome.setBounds(216, 10, 237, 17);
+		contentPane.add(lblWelcome);
 	}
 	
 	public OperatorFrame(String realName) {
-		
+		this();
+		lblWelcome.setText("Welcome, " + realName);
 	}
 }

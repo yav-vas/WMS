@@ -17,7 +17,7 @@ public class SalesRepresentativeFrame extends JFrame  {
 	
 	public SalesRepresentativeFrame() {
 		setTitle("Sales representative");
-		setBounds(100, 100, 435, 140);
+		setBounds(100, 100, 435, 175);
 		getContentPane().setLayout(null);
 		
 		JButton btnNewButton = new JButton("New Order");
@@ -34,6 +34,18 @@ public class SalesRepresentativeFrame extends JFrame  {
 		lblWelcomeRealName.setHorizontalAlignment(SwingConstants.CENTER);
 		lblWelcomeRealName.setBounds(12, 12, 411, 17);
 		getContentPane().add(lblWelcomeRealName);
+		
+		JButton btnLogOut = new JButton("Log out");
+		btnLogOut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				LoginFrame loginFrame = new LoginFrame();
+				loginFrame.setVisible(true);
+				dispose();
+			}
+		});
+		btnLogOut.setBounds(318, 107, 105, 27);
+		getContentPane().add(btnLogOut);
 	}
 	
 	public SalesRepresentativeFrame(String realName) {

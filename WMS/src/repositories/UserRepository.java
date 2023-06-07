@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import models.User;
+import models.UserRole;
 
 public class UserRepository {
 	
@@ -45,6 +46,24 @@ public class UserRepository {
 		usersFile.close();
 		
 		return users.toArray(new User[users.size()]);
+	}
+	
+	public static User[] getAllDriverUsers() throws FileNotFoundException {
+		File file = new File("data/users.txt");
+		Scanner usersFile = new Scanner(file);
+		
+		ArrayList<User> driverUsers = new ArrayList<User>();
+		
+		while(usersFile.hasNext()) {
+			User currentUser = readUser(usersFile);
+			
+			if (currentUser.getUserRole() == UserRole.DRIVER)
+				driverUsers.add(currentUser);
+		}
+		
+		usersFile.close();
+		
+		return driverUsers.toArray(new User[driverUsers.size()]);
 	}
 	
 	// if the added user is null - nothing will be added

@@ -1,34 +1,34 @@
 package views;
 
 import java.awt.EventQueue;
+import java.awt.event.*;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.JScrollPane;
-import javax.swing.JList;
-import java.awt.Font;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-import javax.swing.UIManager;
-import javax.swing.JTextArea;
-import javax.swing.JFormattedTextField;
-import javax.swing.JTextPane;
-import javax.swing.JRadioButton;
-import javax.swing.JCheckBox;
+import javax.swing.border.*;
+
+import controllers.DriverController;
+
+import java.awt.*;
+import javax.swing.*;
+
+import models.Client;
+import models.Order;
+import models.OrderProduct;
+import repositories.ClientRepository;
+import repositories.OrderRepository;
+
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 public class DriverFrame extends JFrame {
 
 	private JPanel contentPane;
 	
 	private JLabel welcomeLabel;
+	private String realName;
+	
+	private JList<Order> ordersList;
 
 	/**
 	 * Create the frame.
@@ -62,6 +62,18 @@ public class DriverFrame extends JFrame {
 		orderPanel.setLayout(null);
 		
 		JButton btnSetAsCompleted = new JButton("Set as completed");
+		btnSetAsCompleted.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					OrderRepository.removeOrder(ordersList.getSelectedValue());
+					ordersList.setModel(DriverController.loadDriverOrders(realName));
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(btnSetAsCompleted, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+				} catch (FileNotFoundException ex) {
+					JOptionPane.showMessageDialog(btnSetAsCompleted, "Data file not found!", "An error occured", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		btnSetAsCompleted.setBackground(Color.GREEN);
 		btnSetAsCompleted.setBounds(12, 219, 136, 43);
 		orderPanel.add(btnSetAsCompleted);
@@ -70,6 +82,7 @@ public class DriverFrame extends JFrame {
 		btnSetAsCanceled.setBackground(Color.RED);
 		btnSetAsCanceled.setBounds(191, 219, 136, 43);
 		orderPanel.add(btnSetAsCanceled);
+		btnSetAsCanceled.setVisible(false); // TODO: fix to activate the expected behavior of the button
 		
 		JLabel customerNameInfoLabel = new JLabel("Customer name:");
 		customerNameInfoLabel.setBounds(12, 12, 98, 17);
@@ -96,31 +109,25 @@ public class DriverFrame extends JFrame {
 		JLabel totalInfoLabel = new JLabel("Total:");
 		totalInfoLabel.setBounds(254, 140, 73, 17);
 		orderPanel.add(totalInfoLabel);
+		totalInfoLabel.setVisible(false); // TODO: fix to show the real data
 		
 		JLabel totalLabel = new JLabel("total");
 		totalLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
 		totalLabel.setBounds(254, 159, 73, 17);
 		orderPanel.add(totalLabel);
+		totalLabel.setVisible(false); // TODO: fix to show the real data
 		
 		JCheckBox chckbxPaidNow = new JCheckBox("Paid");
 		chckbxPaidNow.setBounds(254, 182, 73, 25);
 		orderPanel.add(chckbxPaidNow);
+		chckbxPaidNow.setVisible(false); // TODO: fix to show the real data
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(12, 102, 217, 105);
 		orderPanel.add(scrollPane_1);
 		
-		JList list_1 = new JList();
-		scrollPane_1.setViewportView(list_1);
-		
-		JButton btnClearSelection = new JButton("Clear selection");
-		btnClearSelection.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnClearSelection.setFont(new Font("Dialog", Font.BOLD, 20));
-		btnClearSelection.setBounds(399, 69, 339, 37);
-		contentPane.add(btnClearSelection);
+		JList<OrderProduct> productsList = new JList<OrderProduct>();
+		scrollPane_1.setViewportView(productsList);
 		
 		JLabel informationLabel = new JLabel("To see order details select an order");
 		informationLabel.setFont(new Font("Dialog", Font.BOLD, 15));
@@ -144,13 +151,50 @@ public class DriverFrame extends JFrame {
 		scrollPane.setBounds(12, 68, 375, 379);
 		contentPane.add(scrollPane);
 		
-		JList list = new JList();
-		scrollPane.setViewportView(list);
+		ordersList = new JList<Order>();
+		ordersList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (ordersList.getSelectedIndex() == -1)
+					return;
+				
+				Order currentOrder = ordersList.getSelectedValue();
+				
+				// TODO: not following MVC - stop using repositories in the view
+				Client currentClient;
+				try {
+					currentClient = ClientRepository.getClientByClientName(currentOrder.getClientName());
+					customerNameLabel.setText(currentClient.getClientName());
+					addressLabel.setText(currentClient.getCity() + " - " + currentClient.getAddress());
+				} catch (FileNotFoundException ex) {
+					JOptionPane.showMessageDialog(ordersList, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				ArrayList<OrderProduct> currentOrderProducts = currentOrder.getProducts();
+				
+				DefaultListModel<OrderProduct> model = new DefaultListModel<OrderProduct>();
+				
+				for (OrderProduct product : currentOrderProducts) {
+					model.addElement(product);
+				}
+				
+				productsList.setModel(model);
+				
+				totalLabel.setText(Double.toString(currentOrder.getTotal()));
+			}
+		});
+		scrollPane.setViewportView(ordersList);
 	}
 	
 	public DriverFrame(String realName) {
 		this();
 		
+		this.realName = realName;
 		welcomeLabel.setText("Welcome, " + realName);
+		
+		try {
+			ordersList.setModel(DriverController.loadDriverOrders(realName));
+		} catch (IllegalArgumentException ex) {
+			JOptionPane.showMessageDialog(this, ex.getMessage(), "An error occured", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

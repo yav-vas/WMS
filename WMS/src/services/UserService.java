@@ -21,6 +21,12 @@ public class UserService {
 		return getAllUsers();
 	}
 	
+	public static User[] getDriverUsersSortedByUsername() throws FileNotFoundException {
+		User[] users = UserRepository.getAllDriverUsers();
+		sortUsersByUsername(users, 0, users.length - 1);
+		return users;
+	}
+	
 	public static void editUser(User oldUser, User newUser) throws FileNotFoundException {
 		UserRepository.editUser(oldUser, newUser);
 	}

@@ -87,6 +87,26 @@ public class Order {
 		totalBigDecimal = totalBigDecimal.subtract(new BigDecimal(product.getCost()));
 		totalBigDecimal = totalBigDecimal.setScale(2, RoundingMode.DOWN);
 		setTotal(totalBigDecimal.doubleValue());
+		
+		if (totalBigDecimal.doubleValue() < 0)
+			setTotal(0.0);
+	}
+	
+	@Override
+	public String toString() {
+		return getClientName();
+	}
+	
+	@Override
+	// equal if client names and count of products are the same
+	public boolean equals(Object obj) {
+		if (obj instanceof Order) {
+			Order objOrder = (Order) obj;
+			
+			return objOrder.getClientName().equals(getClientName()) && objOrder.getProducts().size() == getProducts().size();
+		} else {
+			return false;
+		}
 	}
 	
 }

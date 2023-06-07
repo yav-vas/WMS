@@ -25,7 +25,10 @@ public class OrderRepository {
 			int productsCount = Integer.parseInt(reader.nextLine());
 			
 			for (int i = 0; i < productsCount; i++) {
-				OrderProduct orderProduct = new OrderProduct(reader.next(), Integer.parseInt(reader.nextLine()));
+				String productName = reader.next();
+				int productQuantity = Integer.parseInt(reader.next());
+				reader.nextLine(); // go to the next product
+				OrderProduct orderProduct = new OrderProduct(productName, productQuantity);
 				currentOrder.addProduct(orderProduct);
 			}
 			
@@ -82,14 +85,40 @@ public class OrderRepository {
 		file.delete();
 		tmpFile.renameTo(file);
 	}
+	
+	public static Order[] getAllOrdersWithoutDriver() throws FileNotFoundException {
+		List<Order> ordersWithoutDriver = new ArrayList<Order>();
+		
+		File file = new File("data/orders.txt");
+		Scanner ordersFile = new Scanner(file);
+		
+		while (ordersFile.hasNext()) {
+			Order currentOrder = readOrder(ordersFile);
+			if (currentOrder.getDriverName() == null) {
+				ordersWithoutDriver.add(currentOrder);
+			}
+		}
+		
+		ordersFile.close();
+		
+		Order[] result = new Order[ordersWithoutDriver.size()];
+		ordersWithoutDriver.toArray(result);
+		return result;
+	}
+	
 	public static Order[] getAllOrdersWithDriver(String driverRealName) throws FileNotFoundException {
-        List<Order> ordersWithDriver = new ArrayList<>();
+        List<Order> ordersWithDriver = new ArrayList<Order>();
 
         File file = new File("data/orders.txt");
         Scanner ordersFile = new Scanner(file);
 
         while (ordersFile.hasNext()) {
             Order currentOrder = readOrder(ordersFile);
+            String driverName = currentOrder.getDriverName();
+            
+            if (driverName == null)
+            	continue;
+            
             if (currentOrder.getDriverName().equals(driverRealName)) {
                 ordersWithDriver.add(currentOrder);
             }
@@ -101,6 +130,27 @@ public class OrderRepository {
         ordersWithDriver.toArray(result);
         return result;
     }
+	
+	public static void assignDriver(Order order, String driverName) throws FileNotFoundException {
+		File file = new File("data/orders.txt");
+		Scanner ordersFile = new Scanner(file);
+		PrintWriter tmpWriter = new PrintWriter("data/tmpOrders.txt");
+		File tmpFile = new File("data/tmpOrders.txt");
+		
+		while (ordersFile.hasNext()) {
+			Order currentOrder = readOrder(ordersFile);
+			if (currentOrder.equals(order)) {
+				currentOrder.setDriverName(driverName);
+			}
+			writerOrder(tmpWriter, currentOrder);
+		}
+		
+		ordersFile.close();
+		tmpWriter.close();
+		
+		file.delete();
+		tmpFile.renameTo(file);
+	}
 	
 	public static void removeOrder(Order orderToRemove) throws FileNotFoundException {
         File file = new File("data/orders.txt");

@@ -48,6 +48,21 @@ public class ClientRepository {
 		return clients.toArray(new Client[clients.size()]);
 	}
 	
+	public static Client getClientByClientName(String clientName) throws FileNotFoundException {
+		File file = new File("data/clients.txt");
+		Scanner clientsFile = new Scanner(file);
+		
+		while (clientsFile.hasNext()) {
+			Client currentClient = readClient(clientsFile);
+			if (currentClient.getClientName().equals(clientName))
+				return currentClient;
+		}
+		
+		clientsFile.close();
+		
+		return null;
+	}
+	
 	public static void addNewClient(Client newClient) throws FileNotFoundException {
 		File file = new File("data/clients.txt");
 		Scanner clientsFile = new Scanner(file);

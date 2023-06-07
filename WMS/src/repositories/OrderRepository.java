@@ -2,7 +2,7 @@ package repositories;
 
 import java.util.Scanner;
 import java.io.*;
-import java.util.InputMismatchException;
+import java.util.*;
 
 import models.Order;
 import models.OrderProduct;
@@ -82,4 +82,43 @@ public class OrderRepository {
 		file.delete();
 		tmpFile.renameTo(file);
 	}
+	public static Order[] getAllOrdersWithDriver(String driverRealName) throws FileNotFoundException {
+        List<Order> ordersWithDriver = new ArrayList<>();
+
+        File file = new File("data/orders.txt");
+        Scanner ordersFile = new Scanner(file);
+
+        while (ordersFile.hasNext()) {
+            Order currentOrder = readOrder(ordersFile);
+            if (currentOrder.getDriverName().equals(driverRealName)) {
+                ordersWithDriver.add(currentOrder);
+            }
+        }
+
+        ordersFile.close();
+
+        Order[] result = new Order[ordersWithDriver.size()];
+        ordersWithDriver.toArray(result);
+        return result;
+    }
+	
+	public static void removeOrder(Order orderToRemove) throws FileNotFoundException {
+        File file = new File("data/orders.txt");
+        Scanner ordersFile = new Scanner(file);
+        PrintWriter tmpWriter = new PrintWriter("data/tmpOrders.txt");
+        File tmpFile = new File("data/tmpOrders.txt");
+
+        while (ordersFile.hasNext()) {
+            Order currentOrder = readOrder(ordersFile);
+            if (!currentOrder.equals(orderToRemove)) {
+                writerOrder(tmpWriter, currentOrder);
+            }
+        }
+
+        ordersFile.close();
+        tmpWriter.close();
+
+        file.delete();
+        tmpFile.renameTo(file);
+    }
 }
